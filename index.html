@@ -10,12 +10,12 @@
         
         .main-container { padding: 20px; padding-bottom: 180px; }
         .song-item { padding: 15px 20px; border-bottom: 0.5px solid #333; display: flex; justify-content: space-between; align-items: center; }
-        .song-info { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .song-info { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
         .song-item.active .song-info { font-weight: 800; color: var(--accent); }
         
-        .btn-delete { background: none; border: none; color: #666; font-size: 18px; padding: 5px 10px; cursor: pointer; }
+        .btn-delete { background: none; border: none; color: #666; font-size: 16px; padding: 5px 10px; cursor: pointer; }
 
-        /* Panel de Reproducción */
+        /* Panel de Reproducción con Gesto */
         #player { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 150px; 
             background: rgba(28,28,30,0.95); backdrop-filter: blur(20px);
@@ -24,7 +24,7 @@
         }
         #player.expanded { height: 100vh; border-radius: 0; overflow-y: auto; }
         
-        .seek-container { width: 100%; height: 6px; background: #444; border-radius: 3px; margin: 15px 0; }
+        .seek-container { width: 100%; height: 6px; background: #444; border-radius: 3px; margin: 15px 0; cursor: pointer; }
         #seek-bar { height: 100%; width: 0%; background: #fff; border-radius: 3px; }
     </style>
 </head>
@@ -32,7 +32,7 @@
 
     <div class="main-container">
         <h1>Biblioteca</h1>
-        <button onclick="document.getElementById('file-in').click()" style="background:var(--accent); border:none; color:white; padding:10px 20px; border-radius:20px; font-weight:600;">Añadir Música</button>
+        <button onclick="document.getElementById('file-in').click()" style="background:var(--accent); border:none; color:white; padding:10px 20px; border-radius:20px; font-weight:600; cursor:pointer;">Añadir Música</button>
         <div id="main-list" style="margin-top:20px;"></div>
     </div>
     <input type="file" id="file-in" style="display:none" webkitdirectory multiple>
@@ -44,10 +44,10 @@
         <div class="seek-container" id="seek-container"><div id="seek-bar"></div></div>
         
         <div style="display:flex; justify-content:space-around; align-items:center; margin-top:15px;">
-            <button onclick="toggleShuffle()" id="shuffle-btn" style="background:none; border:none; color:white; font-size:18px;">🔀</button>
-            <button onclick="prev()" style="background:none; border:none; color:white;">⏮</button>
-            <button onclick="togglePlay()" style="background:white; border-radius:20px; padding:8px 20px; border:none; font-weight:bold;">Play/Pausa</button>
-            <button onclick="next()" style="background:none; border:none; color:white;">⏭</button>
+            <button onclick="toggleShuffle()" id="shuffle-btn" style="background:none; border:none; color:white; font-size:14px; font-weight:600; cursor:pointer;">Aleatorio</button>
+            <button onclick="prev()" style="background:none; border:none; color:white; cursor:pointer;">Anterior</button>
+            <button onclick="togglePlay()" style="background:white; border-radius:20px; padding:8px 20px; border:none; font-weight:bold; cursor:pointer;">Play / Pausa</button>
+            <button onclick="next()" style="background:none; border:none; color:white; cursor:pointer;">Siguiente</button>
         </div>
 
         <div style="margin-top:30px;">
@@ -79,7 +79,7 @@
             const listHTML = db.length === 0 ? '<p style="color:#666;">No hay canciones añadidas</p>' : db.map((f, i) => `
                 <div class="song-item ${i === currentIdx ? 'active' : ''}">
                     <div class="song-info" onclick="playAt(${i})">${f.name.replace('.mp3','')}</div>
-                    <button class="btn-delete" onclick="deleteSong(event, ${i})">🗑</button>
+                    <button class="btn-delete" onclick="deleteSong(event, ${i})">Borrar</button>
                 </div>
             `).join('');
 
@@ -96,14 +96,14 @@
         }
 
         function deleteSong(event, i) {
-            event.stopPropagation(); // Evita que se reproduzca al dar clic en borrar
+            event.stopPropagation();
             if (i === currentIdx) {
                 audio.pause();
                 currentIdx = -1;
                 document.getElementById('track-name').innerText = "Selecciona una canción";
                 document.getElementById('seek-bar').style.width = "0%";
             } else if (i < currentIdx) {
-                currentIdx--; // Ajusta el índice si borramos una canción anterior a la actual
+                currentIdx--;
             }
             db.splice(i, 1);
             render();
@@ -127,7 +127,7 @@
                 playAt(nextIdx);
             } else {
                 if (currentIdx < db.length - 1) playAt(currentIdx + 1);
-                else playAt(0); // Vuelve al inicio si llega al final
+                else playAt(0);
             }
         }
 
